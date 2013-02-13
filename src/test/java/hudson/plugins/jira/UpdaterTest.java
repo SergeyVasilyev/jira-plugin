@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import hudson.model.BuildListener;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
+import hudson.model.ItemGroup;
 import hudson.model.ParameterValue;
 import hudson.model.ParametersAction;
 import hudson.model.Result;
@@ -249,6 +250,11 @@ public class UpdaterTest {
 		when(build.getChangeSet()).thenReturn(changeLogSet);
 		when(build.getResult()).thenReturn(Result.SUCCESS);
 
+                ItemGroup itemGroup = mock(ItemGroup.class);
+                when(itemGroup.getFullDisplayName()).thenReturn("Project Name");
+                when(project.getParent()).thenReturn(itemGroup);
+                when(build.getDisplayName()).thenReturn("#33");
+
 		Set<? extends Entry> entries = Sets.newHashSet(new MockEntry("Fixed FOOBAR-4711"));
 		when(changeLogSet.iterator()).thenReturn(entries.iterator());
 
@@ -260,7 +266,8 @@ public class UpdaterTest {
 		Assert.assertEquals(1, comments.size());
 		RemoteComment comment = comments.get(0);
 
-		Assert.assertTrue(comment.getBody().contains("FOOBAR-4711"));
+//		Assert.assertTrue(comment.getBody().contains("FOOBAR-4711"));
+		Assert.assertTrue(comment.getBody().startsWith("*#33*"));
 		Assert.assertTrue(comment.getGroupLevel().equals(""));
 
 
@@ -275,7 +282,7 @@ public class UpdaterTest {
 		Assert.assertEquals(1, comments.size());
 		comment = comments.get(0);
 
-		Assert.assertTrue(comment.getBody().contains("Foobar-4711"));
+//		Assert.assertTrue(comment.getBody().contains("Foobar-4711"));
 
 	}
 
